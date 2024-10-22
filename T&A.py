@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import math
 
 # Box information
 boxes = {
@@ -7,19 +8,22 @@ boxes = {
         "name": "Small Box",
         "dimensions": (30, 20, 15),
         "max_weight": 5,
-        "price_per_kg": 50
+        "price_per_kg": 50,
+        "base_price":100 # เพิ่ม base price
     },
     2: {
         "name": "Medium Box",
         "dimensions": (40, 30, 20),
         "max_weight": 10,
-        "price_per_kg": 40
+        "price_per_kg": 40,
+        "base_price": 150
     },
     3: {
         "name": "Large Box",
         "dimensions": (60, 40, 30),
         "max_weight": 20,
-        "price_per_kg": 30
+        "price_per_kg": 30,
+        "base_price": 200
     },
     4: {
         "name": "Extra Large Box",
