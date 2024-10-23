@@ -156,7 +156,7 @@ def calculate_price_and_weight(box_info, weight, delivery_type):
     if weight > box_info["max_weight"]:
         return None, "Weight exceeds the box limit"
     
-    # เริ่มต้นค่าจัดส่งที่ 40 บาท
+    # เริ่มต้นค่าจัดส่งที่ 30 บาท
     base_shipping_cost = 30
 
     # ค่าบริการเพิ่มเติมสำหรับการส่งแบบ express
