@@ -183,6 +183,3 @@ if st.button("Confirm Delivery"):
         st.success(f"Delivery confirmed!\nPackage: {selected_box['name']}\nWeight: {weight} kg\nDistance: {distance:.2f} km\nProvince: {selected_province}\nStart Time: {start_time}")
     else:
         st.error("Please complete all fields.")
-
-
-
