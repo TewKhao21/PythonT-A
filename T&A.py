@@ -116,8 +116,10 @@ province_coords = {
 def calculate_price_and_weight(box_info, weight):
     if weight > box_info["max_weight"]:
         return None, "Weight exceeds the box limit"
+        # เพิ่มราคาสำหรับการส่งด่วน
+    extra_charge = 40 if delivery_type == "express" else 0
 
-    total_price = weight * box_info["price_per_kg"] + box_info["base_price"]  # เพิ่มราคาฐาน
+    total_price = weight * box_info["price_per_kg"] + box_info["base_price"] + extra_charge # เพิ่มราคาฐาน
     return total_price, weight
 
 
@@ -172,6 +174,16 @@ class DeliveryApp(tk.Tk):
         self.weight_entry = tk.Entry(self, font=label_font)
         self.weight_entry.pack()
 
+        # Delivery type selection
+        tk.Label(self,
+                 text="Select Delivery Type:",
+                 font=label_font,
+                 bg="#99FFCC",
+                 fg="#333").pack(pady=10)
+        self.delivery_type_var = tk.StringVar(value="standard")
+        tk.Radiobutton(self, text="Standard Delivery", variable=self.delivery_type_var, value="standard", font=label_font, bg="#99FFCC").pack()
+        tk.Radiobutton(self, text="Express Delivery", variable=self.delivery_type_var, value="express", font=label_font, bg="#99FFCC").pack()
+        
         # Calculate suitable box button
         tk.Button(self,
                   text="Select Box",
@@ -276,11 +288,17 @@ class DeliveryApp(tk.Tk):
 
         try:
             selected_province = self.province_var.get()
-            delivery_index = self.provinces.index(selected_province)
-            delivery_time = self.delivery_times[delivery_index % len(self.delivery_times)]
+            delivery_type = self.delivery_type_var.get()
+
+            # Adjust delivery time based on type
+            if delivery_type == "standard":
+                delivery_time = "6:00"  # Standard time (6 hours example)
+            else:
+                delivery_time = "4:00"  # Express time (2 hours faster)
+
             estimated_arrival = add_delivery_time(start_time, delivery_time)
             self.time_label.config(
-                text=f"Estimated Arrival Time in {selected_province}: {estimated_arrival}"
+                text=f"Estimated Arrival Time in {selected_province}: {estimated_arrival}({delivery_type.capitalize()} Delivery)"
             )
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid time")
@@ -296,7 +314,7 @@ class DeliveryApp(tk.Tk):
 
         if weight and selected_province and start_time:
             selected_box = boxes[self.box_choice]
-            distance = haversine_distance(province_coords["Bangkok"][0], province_coords["Bangkok"][1],
+            distance = haversine_distance(province_coords["Chiang Mai"][0], province_coords["Chiang Mai"][1],
                                           province_coords[selected_province][0], province_coords[selected_province][1])
             self.confirm_label.config(
                 text=f"Delivery confirmed!\nPackage: {selected_box['name']}\nWeight: {weight} kg\nDistance: {distance:.2f} km\nProvince: {selected_province}\nStart Time: {start_time}"
