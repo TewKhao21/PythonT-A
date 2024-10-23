@@ -60,6 +60,7 @@ province_coords = {
     "Mae Hong Son": (19.301672, 97.969646),
     "Maha Sarakham": (16.184520, 103.300878),
     "Mukdahan": (16.545311, 104.723052),
+    "Narathiwat": (6.426481, 101.823547),
     "Nakhon Nayok": (14.204893, 101.214394),
     "Nakhon Pathom": (13.819920, 100.062167),
     "Nakhon Phanom": (17.392039, 104.769405),
