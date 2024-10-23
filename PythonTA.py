@@ -8,28 +8,28 @@ boxes = {
         "dimensions": (30, 20, 15),
         "max_weight": 5,
         "price_per_kg": 50,
-        "base_price": 100
+        "base_price": 30
     },
     2: {
         "name": "Medium Box",
         "dimensions": (40, 30, 20),
         "max_weight": 10,
         "price_per_kg": 40,
-        "base_price": 150
+        "base_price": 100
     },
     3: {
         "name": "Large Box",
         "dimensions": (60, 40, 30),
         "max_weight": 20,
         "price_per_kg": 30,
-        "base_price": 200
+        "base_price": 170
     },
     4: {
         "name": "Extra Large Box",
         "dimensions": (80, 60, 50),
         "max_weight": 30,
         "price_per_kg": 25,
-        "base_price": 300
+        "base_price": 220
     },
 }
 
@@ -116,9 +116,20 @@ province_coords = {
 def calculate_price_and_weight(box_info, weight, delivery_type):
     if weight > box_info["max_weight"]:
         return None, "Weight exceeds the box limit"
-    extra_charge = 40 if delivery_type == "express" else 0
-    total_price = weight * box_info["price_per_kg"] + box_info["base_price"] + extra_charge
+    
+    # เริ่มต้นค่าจัดส่งที่ 40 บาท
+    base_shipping_cost = 30
+
+    # ค่าบริการเพิ่มเติมสำหรับการส่งแบบ express
+    extra_charge = 30 if delivery_type == "express" else 0
+    
+    # เพิ่มค่าใช้จ่าย 5 บาทต่อกิโลกรัมที่เกินมา
+    additional_weight_charge = max(0, (weight - 1) * 5)
+    
+    # คำนวณราคาทั้งหมด
+    total_price = base_shipping_cost + additional_weight_charge + box_info["base_price"] + extra_charge
     return total_price, weight
+
 
 # Function to add delivery time
 def add_delivery_time(start_time, delivery_time):
