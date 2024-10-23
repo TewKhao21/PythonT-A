@@ -1,6 +1,45 @@
 import streamlit as st
 import math
 
+# Function to set language
+def set_language():
+    lang = st.sidebar.selectbox("Choose Language / เลือกภาษา", ["English", "ไทย"])
+    return lang
+
+# Translations dictionary
+translations = {
+    "English": {
+        "title": "Logistic Calculator",
+        "weight_label": "Please enter the package weight (kg):",
+        "delivery_type": "Select Delivery Type:",
+        "box_selected": "Selected Box",
+        "price_label": "Total Price",
+        "start_time": "Enter the delivery start time (HH:MM):",
+        "province_label": "Select Destination Province:",
+        "calculate_button": "Calculate Delivery Time",
+        "arrival_time": "Estimated Arrival Time in",
+        "confirm_button": "Confirm Delivery",
+        "success_message": "Delivery confirmed!",
+        "error_message": "Please complete all fields.",
+        "box_error": "No suitable box for this weight."
+    },
+    "ไทย": {
+        "title": "คำนวณค่าขนส่ง",
+        "weight_label": "กรุณาใส่น้ำหนักของพัสดุ (กก.):",
+        "delivery_type": "เลือกประเภทการส่ง:",
+        "box_selected": "กล่องที่เลือก",
+        "price_label": "ราคาทั้งหมด",
+        "start_time": "ใส่เวลาเริ่มการส่ง (ชม:นาที):",
+        "province_label": "เลือกจังหวัดปลายทาง:",
+        "calculate_button": "คำนวณเวลาจัดส่ง",
+        "arrival_time": "เวลาประมาณการถึงที่",
+        "confirm_button": "ยืนยันการจัดส่ง",
+        "success_message": "การจัดส่งได้รับการยืนยัน!",
+        "error_message": "กรุณากรอกข้อมูลให้ครบถ้วน",
+        "box_error": "ไม่มีขนาดกล่องที่เหมาะสมกับน้ำหนักนี้"
+    }
+}
+
 # Box information
 boxes = {
     1: {
@@ -152,13 +191,16 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return distance
 
 # Streamlit app
-st.title("Logistic Calculator")
+lang = set_language()
+t = translations[lang]
+
+st.title(t["title"])
 
 # User inputs: weight
-weight = st.number_input("Please enter the package weight (kg):", min_value=0.0, step=0.1)
+weight = st.number_input(t["weight_label"], min_value=0.0, step=0.1)
 
 # User inputs: delivery type
-delivery_type = st.radio("Select Delivery Type:", ("standard", "express"))
+delivery_type = st.radio(t["delivery_type"], ("standard", "express"))
 
 # Calculate box and price
 if weight > 0:
@@ -169,31 +211,27 @@ if weight > 0:
         selected_box = boxes[selected_box_id]
         
         total_price, _ = calculate_price_and_weight(selected_box, weight, delivery_type)
-        st.write(f"Selected Box: {selected_box['name']} (Size: {selected_box['dimensions'][0]}x{selected_box['dimensions'][1]}x{selected_box['dimensions'][2]} cm)")
-        st.write(f"Total Price: {total_price:.2f} Baht")
+        st.write(f"{t['box_selected']}: {selected_box['name']} (Size: {selected_box['dimensions'][0]}x{selected_box['dimensions'][1]}x{selected_box['dimensions'][2]} cm)")
+        st.write(f"{t['price_label']}:  {total_price:.2f} Baht")
     else:
-        st.error("No suitable box for this weight.")
+        st.error(t["box_error"])
 
 # User inputs: start time and province
-start_time = st.text_input("Enter the delivery start time (HH:MM):", value="08:00")
-selected_province = st.selectbox("Select Destination Province:", list(province_coords.keys()))
+start_time = st.text_input(t["start_time"], value="08:00")
+selected_province = st.selectbox(t["province_label"], list(province_coords.keys()))
 
 # Calculate delivery time
-if st.button("Calculate Delivery Time"):
+if st.button(t["calculate_button"]):
     if selected_box_id:
         delivery_time = "6:00" if delivery_type == "standard" else "4:00"
         estimated_arrival = add_delivery_time(start_time, delivery_time)
-        st.write(f"Estimated Arrival Time in {selected_province}: {estimated_arrival} ({delivery_type.capitalize()} Delivery)")
+        st.write(f"{t['arrival_time']} {selected_province}: {estimated_arrival} ({delivery_type.capitalize()} Delivery)")
 
 # Confirm delivery
-if st.button("Confirm Delivery"):
+if st.button(t["confirm_button"]):
     if weight and selected_province and start_time:
         distance = haversine_distance(province_coords["Bangkok"][0], province_coords["Bangkok"][1],
                                       province_coords[selected_province][0], province_coords[selected_province][1])
-        st.success(f"Delivery confirmed!\nPackage: {selected_box['name']}\nWeight: {weight} kg\nDistance: {distance:.2f} km\nProvince: {selected_province}\nStart Time: {start_time}")
+        st.success(f"{t['success_message']}\nPackage: {selected_box['name']}\nWeight: {weight} kg\nDistance: {distance:.2f} km\nProvince: {selected_province}\nStart Time: {start_time}")
     else:
-        st.error("Please complete all fields.")
-
-
-
-
+        st.error(t["error_message"])
